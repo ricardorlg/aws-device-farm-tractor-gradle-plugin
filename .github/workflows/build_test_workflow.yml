@@ -23,6 +23,8 @@ jobs:
         restore-keys: ${{ runner.os }}-gradle
     - name: Build with Gradle
       run: ./gradlew build
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Publish Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1.6
       if: always()
