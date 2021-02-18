@@ -1,7 +1,8 @@
 package com.ricardorlg.devicefarm.tractor.gradle
 
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 class DeviceFarmTractorGradlePluginTest {
@@ -12,7 +13,7 @@ class DeviceFarmTractorGradlePluginTest {
         val project = ProjectBuilder.builder().build()
 
         //WHEN
-        project.pluginManager.apply("com.ricardorlg.devicefarm.tractor-gradle-plugin")
+        project.pluginManager.apply("com.ricardorlg.devicefarm.DeviceFarmTractorGradlePlugin")
 
         //THEN
         assertTrue(project.tasks.any { it.name == "runAwsTests" }, "the project should have the runAwsTests task")

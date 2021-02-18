@@ -11,6 +11,6 @@ jobs:
         with:
           java-version: 11
       - name: Publish package
-        run: gradle publish
+        run: gradle publishPluginPublicationPublicationToGitHubPackagesRepository
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

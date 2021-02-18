@@ -50,9 +50,9 @@ pluginBundle {
 
 gradlePlugin {
     plugins {
-        deviceFarmTractorPlugin {
-            id = 'com.ricardorlg.devicefarm.tractor-gradle-plugin'
-            displayName = 'AWS Device farm tracto gradle plugin'
+        deviceFarmTractorGradlePlugin {
+            id = "com.ricardorlg.devicefarm.DeviceFarmTractorGradlePlugin"
+            displayName = 'AWS Device farm tractor gradle plugin'
             description = 'Run Serenity BDD appium tests on AWS Device farm'
             implementationClass = 'com.ricardorlg.devicefarm.tractor.gradle.DeviceFarmTractorGradlePlugin'
         }
@@ -63,16 +63,16 @@ publishing {
     repositories {
         maven {
             name = "GitHubPackages"
-            url = uri("https://github.com/ricardorlg/aws-device-farm-tractor-gradle-plugin")
+            url = uri("https://maven.pkg.github.com/ricardorlg/aws-device-farm-tractor-gradle-plugin")
             credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
+                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+                password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
             }
         }
     }
-    publications {
-        gpr(MavenPublication) {
-            from(components.java)
+    publications{
+        pluginPublication (MavenPublication) {
+            from    components.java
         }
     }
 }
