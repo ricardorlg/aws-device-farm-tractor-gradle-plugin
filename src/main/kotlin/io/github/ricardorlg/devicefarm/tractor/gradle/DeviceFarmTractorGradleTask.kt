@@ -1,9 +1,9 @@
-package com.ricardorlg.devicefarm.tractor.gradle
+package io.github.ricardorlg.devicefarm.tractor.gradle
 
 import arrow.core.Either
-import com.ricardorlg.devicefarm.tractor.controller.services.implementations.DefaultDeviceFarmTractorLogger
-import com.ricardorlg.devicefarm.tractor.factory.DeviceFarmTractorFactory
-import com.ricardorlg.devicefarm.tractor.model.DeviceFarmTractorError
+import io.github.ricardorlg.devicefarm.tractor.controller.services.implementations.DefaultDeviceFarmTractorLogger
+import io.github.ricardorlg.devicefarm.tractor.factory.DeviceFarmTractorFactory
+import io.github.ricardorlg.devicefarm.tractor.model.DeviceFarmTractorError
 import kotlinx.coroutines.runBlocking
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -119,7 +119,13 @@ With love from ricardorlg
             )
             logger.logStatus("\r\n" + banner)
             when (runner) {
-                is Either.Left -> throw GradleException("There was an error creating the test runner", runner.a)
+                is Either.Left -> {
+                    if (strictRun) {
+                        throw GradleException("There was an error creating the tractor runner", runner.a)
+                    } else {
+                        logger.logError(runner.a, "There was an error creating the tractor runner")
+                    }
+                }
                 is Either.Right -> {
                     kotlin.runCatching {
                         runner

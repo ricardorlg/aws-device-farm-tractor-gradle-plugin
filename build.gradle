@@ -5,34 +5,32 @@ plugins {
     id 'java-gradle-plugin'
 }
 
-group = 'com.ricardorlg.devicefarm'
-version = '1.0.0'
+group = 'io.github.ricardorlg'
+version = '1.0.1'
 
 repositories {
     mavenCentral()
-    maven {
-        name = "GitHubPackages"
-        url = uri("https://maven.pkg.github.com/ricardorlg/aws-device-farm-tractor")
-        credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
-            password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
-        }
-    }
 }
 
 dependencies {
     implementation platform('software.amazon.awssdk:bom:2.15.82')
-    implementation "com.ricardorlg.devicefarm:tractor:$tractor_version"
+    implementation "io.github.ricardorlg:devicefarm-tractor:$tractor_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
     implementation "io.arrow-kt:arrow-core:$arrow_version"
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+    testImplementation "org.assertj:assertj-core:$assertj_version"
+    testImplementation "io.mockk:mockk:$mockk_version"
+    testImplementation "io.github.microutils:kotlin-logging:$kotlin_logging_version"
+
+    testImplementation(gradleTestKit())
 
 }
 
 java {
     withSourcesJar()
+    withJavadocJar()
 }
 
 jar {
@@ -51,10 +49,10 @@ pluginBundle {
 gradlePlugin {
     plugins {
         deviceFarmTractorGradlePlugin {
-            id = "com.ricardorlg.devicefarm.DeviceFarmTractorGradlePlugin"
+            id = "io.github.ricardorlg.DeviceFarmTractorGradlePlugin"
             displayName = 'AWS Device farm tractor gradle plugin'
             description = 'Run Serenity BDD appium tests on AWS Device farm'
-            implementationClass = 'com.ricardorlg.devicefarm.tractor.gradle.DeviceFarmTractorGradlePlugin'
+            implementationClass = 'io.github.ricardorlg.devicefarm.tractor.gradle.DeviceFarmTractorGradlePlugin'
         }
     }
 }
@@ -70,15 +68,16 @@ publishing {
             }
         }
     }
-    publications{
-        pluginPublication (MavenPublication) {
-            from    components.java
+    publications {
+        pluginPublication(MavenPublication) {
+            from components.java
         }
     }
 }
 
 test {
     useJUnitPlatform()
+
 }
 
 compileKotlin {

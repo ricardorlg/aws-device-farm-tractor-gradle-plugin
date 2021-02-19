@@ -1,4 +1,4 @@
-package com.ricardorlg.devicefarm.tractor.gradle
+package io.github.ricardorlg.devicefarm.tractor.gradle
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
