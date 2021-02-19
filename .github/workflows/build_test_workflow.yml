@@ -15,6 +15,10 @@ jobs:
         java-version: 11
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+    - name: Decode
+      run: |
+          echo "${{secrets.SIGNING_SECRET_KEY_RING_FILE}}" > secring.gpg.b64
+          base64 -d secring.gpg.b64 > secring.gpg
     - name: Cache Gradle packages
       uses: actions/cache@v2
       with:
