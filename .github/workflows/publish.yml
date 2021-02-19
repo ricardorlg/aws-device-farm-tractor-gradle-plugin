@@ -10,17 +10,19 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
       - name: Decode
         run: |
-          echo "${{secrets.SIGNING_SECRET_KEY_RING_FILE}}" > secring.gpg.b64
-          base64 -d secring.gpg.b64 > secring.gpg
+            echo "${{secrets.SIGNING_SECRET_KEY_RING_FILE}}" > secring.gpg.b64
+            base64 -d secring.gpg.b64 > secring.gpg
       - name: Publish to github package
         run: gradle publishDeviceFarmTractorGradlePluginPublicationToGitHubPackagesRepository
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish to maven central
         if: ${{ always() }}
-        run: gradle publishDeviceFarmTractorGradlePluginPublicationToMavenCentralRepository -Psigning.keyId=${{secrets.SIGNING_KEY_ID}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psigning.secretKeyRingFile=$(echo ~/.gradle/secring.gpg)
+        run: gradle publishDeviceFarmTractorGradlePluginPublicationToMavenCentralRepository -Psigning.keyId=${{secrets.SIGNING_KEY_ID}} -Psigning.password=${{secrets.SIGNING_PASSWORD}} -Psigning.secretKeyRingFile=$(echo secring.gpg)
         env:
           OSSRH_USERNAME: ${{secrets.OSSRH_USERNAME}}
           OSSRH_PASSWORD: ${{secrets.OSSRH_PASSWORD}}
