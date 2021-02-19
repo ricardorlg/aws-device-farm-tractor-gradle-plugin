@@ -3,10 +3,16 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.12.0'
     id 'maven-publish'
     id 'java-gradle-plugin'
+    id 'signing'
+    id 'io.codearte.nexus-staging' version '0.22.0'
 }
 
 group = 'io.github.ricardorlg'
 version = '1.0.1'
+
+ext {
+    isReleasedVersion = !project.version.endsWith("-SNAPSHOT")
+}
 
 repositories {
     mavenCentral()
@@ -60,6 +66,20 @@ gradlePlugin {
 publishing {
     repositories {
         maven {
+            name = "MavenCentral"
+            credentials {
+                username = project.findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
+                password = project.findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
+            }
+
+            if (!isReleasedVersion) {
+                url "https://oss.sonatype.org/content/repositories/snapshots"
+            } else {
+                url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            }
+        }
+
+        maven {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/ricardorlg/aws-device-farm-tractor-gradle-plugin")
             credentials {
@@ -69,10 +89,45 @@ publishing {
         }
     }
     publications {
-        pluginPublication(MavenPublication) {
+        deviceFarmTractorGradlePlugin(MavenPublication) {
             from components.java
+            pom {
+                name = "Device Farm Tractor Gradle plugin"
+                description = "Run Serenity BDD appium tests in AWS device farm using gradle"
+                url = "https://github.com/ricardorlg/aws-device-farm-tractor-gradle-plugin"
+                scm {
+                    connection = "scm:git:git@github.com:ricardorlg/aws-device-farm-tractor-gradle-plugin.git"
+                    developerConnection = "scm:git:ssh://github.com/ricardorlg/aws-device-farm-tractor-gradle-plugin.git"
+                    url = "https://github.com/ricardorlg/aws-device-farm-tractor-gradle-plugin"
+                }
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://github.com/ricardorlg/aws-device-farm-tractor-gradle-plugin/blob/master/LICENSE'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'ricardorlg'
+                        name = 'Ricardo Larrahondo'
+                        email = 'ricardolarrahondo2@hotmail.com'
+
+                    }
+                }
+
+            }
         }
     }
+}
+
+signing {
+    sign publishing.publications.deviceFarmTractorGradlePlugin
+}
+nexusStaging {
+    username = project.findProperty("ossrhUsername") ?: System.getenv("OSSRH_USERNAME")
+    password = project.findProperty("ossrhPassword") ?: System.getenv("OSSRH_PASSWORD")
 }
 
 test {
