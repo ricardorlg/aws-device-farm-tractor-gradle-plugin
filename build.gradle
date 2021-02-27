@@ -4,7 +4,7 @@ plugins {
     id 'maven-publish'
     id 'java-gradle-plugin'
     id 'signing'
-    id 'io.codearte.nexus-staging' version '0.22.0'
+    id 'io.codearte.nexus-staging' version '0.30.0'
 }
 
 group = 'io.github.ricardorlg'
