@@ -4,7 +4,7 @@ plugins {
     id 'maven-publish'
     id 'java-gradle-plugin'
     id 'signing'
-    id 'io.codearte.nexus-staging' version '0.22.0'
+    id 'io.codearte.nexus-staging' version '0.30.0'
 }
 
 group = 'io.github.ricardorlg'
@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation platform('software.amazon.awssdk:bom:2.15.82')
+    implementation platform('software.amazon.awssdk:bom:2.16.8')
     implementation "io.github.ricardorlg:devicefarm-tractor:$tractor_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
     implementation "io.arrow-kt:arrow-core:$arrow_version"
