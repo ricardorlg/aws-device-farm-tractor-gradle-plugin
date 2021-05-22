@@ -101,10 +101,10 @@ class DeviceFarmTractorGradlePluginTest {
         assertThat(error)
             .isInstanceOf(UnexpectedBuildFailure::class.java)
             .hasMessageContaining("Build failed with an exception.")
-            .hasMessageContaining("No value has been specified for property 'appPath'.")
-            .hasMessageContaining("No value has been specified for property 'projectName'.")
-            .hasMessageContaining("No value has been specified for property 'testSpecFilePath'.")
-            .hasMessageContaining("No value has been specified for property 'testsProjectPath'.")
+            .hasMessageContaining("property 'appPath' doesn't have a configured value")
+            .hasMessageContaining("property 'projectName' doesn't have a configured value")
+            .hasMessageContaining("property 'testSpecFilePath' doesn't have a configured value")
+            .hasMessageContaining("property 'testsProjectPath' doesn't have a configured value")
     }
 
     @Test

@@ -1,6 +1,6 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.4.31'
-    id 'com.gradle.plugin-publish' version '0.12.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.5.0'
+    id 'com.gradle.plugin-publish' version '0.14.0'
     id 'maven-publish'
     id 'java-gradle-plugin'
     id 'signing'
@@ -8,7 +8,7 @@ plugins {
 }
 
 group = 'io.github.ricardorlg'
-version = '1.0.1'
+version = '1.0.5'
 
 ext {
     isReleasedVersion = !project.version.endsWith("-SNAPSHOT")
@@ -19,7 +19,8 @@ repositories {
 }
 
 dependencies {
-    implementation platform('software.amazon.awssdk:bom:2.16.8')
+
+    implementation "software.amazon.awssdk:devicefarm:$aws_version"
     implementation "io.github.ricardorlg:devicefarm-tractor:$tractor_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
     implementation "io.arrow-kt:arrow-core:$arrow_version"
@@ -132,13 +133,4 @@ nexusStaging {
 
 test {
     useJUnitPlatform()
-
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
 }

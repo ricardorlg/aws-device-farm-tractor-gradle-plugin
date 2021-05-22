@@ -92,6 +92,13 @@ abstract class DeviceFarmTractorGradleTask : DefaultTask() {
     )
     var disableAppPerformanceMonitoring = false
 
+    @Input
+    @Option(
+        option = "aws.profileName",
+        description = "Profile name to be used loading AWS credentials"
+    )
+    var profileName: String = ""
+
     private val banner = """
  _______           _______  _          ______  _________ _______ __________________ _______  _          ______   _______          _________ _______  _______    _______  _______  _______  _______ 
 (  ___  )|\     /|(  ___  )( \        (  __  \ \__   __/(  ____ \\__   __/\__   __/(  ___  )( \        (  __  \ (  ____ \|\     /|\__   __/(  ____ \(  ____ \  (  ____ \(  ___  )(  ____ )(       )
@@ -115,21 +122,22 @@ With love from ricardorlg
                 accessKeyId = accessKeyId,
                 secretAccessKey = secretAccessKey,
                 sessionToken = sessionToken,
-                region = region
+                region = region,
+                profileName = profileName
             )
-            logger.logStatus("\r\n" + banner)
+            logger.logMessage("\r\n" + banner)
             when (runner) {
                 is Either.Left -> {
                     if (strictRun) {
-                        throw GradleException("There was an error creating the tractor runner", runner.a)
+                        throw GradleException("There was an error creating the tractor runner", runner.value)
                     } else {
-                        logger.logError(runner.a, "There was an error creating the tractor runner")
+                        logger.logError(runner.value, "There was an error creating the tractor runner")
                     }
                 }
                 is Either.Right -> {
                     kotlin.runCatching {
                         runner
-                            .b
+                            .value
                             .runTests(
                                 projectName = projectName,
                                 devicePoolName = devicePool,
@@ -156,17 +164,17 @@ With love from ricardorlg
                             }
                         },
                         onSuccess = {
-                            logger.logStatus("Test execution has been completed")
-                            val devicesResultsTable = runner.b.getDeviceResultsTable(it)
+                            logger.logMessage("Test execution has been completed")
+                            val devicesResultsTable = runner.value.getDeviceResultsTable(it)
                             if (devicesResultsTable.isNotEmpty())
-                                logger.logStatus("\r\n" + devicesResultsTable)
+                                logger.logMessage("\r\n" + devicesResultsTable)
                             if (it.result() != ExecutionResult.PASSED) {
                                 if (strictRun)
                                     throw GradleException("Tests result was not success - actual result = ${it.result()}")
                                 else
                                     logger.logError(msg = "Tests result was not success - actual result = ${it.result()}")
                             } else {
-                                logger.logStatus("Test execution has successfully finished")
+                                logger.logMessage("Test execution has successfully finished")
                             }
                         }
                     )
