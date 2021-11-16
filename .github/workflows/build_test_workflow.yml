@@ -28,7 +28,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Publish Unit Test Results
-      uses: EnricoMi/publish-unit-test-result-action@v1.23
+      uses: EnricoMi/publish-unit-test-result-action@v1.24
       if: always()
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
