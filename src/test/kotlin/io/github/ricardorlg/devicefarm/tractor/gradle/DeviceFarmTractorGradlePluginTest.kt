@@ -4,6 +4,7 @@ package io.github.ricardorlg.devicefarm.tractor.gradle
 import arrow.core.left
 import arrow.core.right
 import io.github.ricardorlg.devicefarm.tractor.factory.DeviceFarmTractorFactory
+import io.github.ricardorlg.devicefarm.tractor.model.TestExecutionType
 import io.github.ricardorlg.devicefarm.tractor.runner.DeviceFarmTractorRunner
 import io.mockk.*
 import mu.KLogger
@@ -33,6 +34,7 @@ class DeviceFarmTractorGradlePluginTest {
         secretAccessKey = secretAccessKey
         region = 'us-west-2'
         projectName='test project'
+        testExecutionType = 'MOBILE_NATIVE'
         appPath = 'users/test-app.apk'
         testSpecFilePath='users/test-spec-file.apk'
         testsProjectPath='users/test-project.zip'
@@ -48,6 +50,7 @@ class DeviceFarmTractorGradlePluginTest {
         region = 'us-west-2'
         strictRun = false
         projectName='test project'
+        testExecutionType = 'MOBILE_NATIVE'
         appPath = 'users/test-app.apk'
         testSpecFilePath='users/test-spec-file.apk'
         testsProjectPath='users/test-project.zip'
@@ -83,7 +86,7 @@ class DeviceFarmTractorGradlePluginTest {
         buildGradleFile.writeText(
             """  plugins {
             id 'io.github.ricardorlg.DeviceFarmTractorGradlePlugin'
-        }
+            }
         """.trimMargin()
         )
 
@@ -101,7 +104,7 @@ class DeviceFarmTractorGradlePluginTest {
         assertThat(error)
             .isInstanceOf(UnexpectedBuildFailure::class.java)
             .hasMessageContaining("Build failed with an exception.")
-            .hasMessageContaining("property 'appPath' doesn't have a configured value")
+            .hasMessageContaining("property 'testExecutionType' doesn't have a configured value")
             .hasMessageContaining("property 'projectName' doesn't have a configured value")
             .hasMessageContaining("property 'testSpecFilePath' doesn't have a configured value")
             .hasMessageContaining("property 'testsProjectPath' doesn't have a configured value")
@@ -158,6 +161,7 @@ class DeviceFarmTractorGradlePluginTest {
         project.pluginManager.apply("io.github.ricardorlg.DeviceFarmTractorGradlePlugin")
         val pluginTask = project.tasks.getByName("runAwsTests") as DeviceFarmTractorGradleTask
         pluginTask.projectName = projectName
+        pluginTask.testExecutionType = TestExecutionType.MOBILE_NATIVE
         pluginTask.appPath = appPath
         pluginTask.testsProjectPath = testsProjectPath
         pluginTask.testSpecFilePath = testSpecFilePath
@@ -168,29 +172,31 @@ class DeviceFarmTractorGradlePluginTest {
         coEvery { runner.getDeviceResultsTable(any()) } returns ""
         coEvery {
             runner.runTests(
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any()
+                projectName = any(),
+                devicePoolName = any(),
+                appPath = any(),
+                testExecutionType = any(),
+                testProjectPath = any(),
+                testSpecPath = any(),
+                captureVideo = any(),
+                runName = any(),
+                testReportsBaseDirectory = any(),
+                downloadReports = any(),
+                cleanStateAfterRun = any(),
+                meteredTests = any(),
+                disablePerformanceMonitoring = any()
             )
         } returns result
         mockkObject(DeviceFarmTractorFactory)
         coEvery {
             DeviceFarmTractorFactory.createRunner(
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any()
+                deviceFarmClientBuilder = any(),
+                logger = any(),
+                accessKeyId = any(),
+                secretAccessKey = any(),
+                sessionToken = any(),
+                region = any(),
+                profileName = any()
             )
         } returns runner.right()
 
@@ -206,7 +212,8 @@ class DeviceFarmTractorGradlePluginTest {
         coVerify {
             runner.runTests(
                 projectName = projectName,
-                "",
+                devicePoolName = "",
+                testExecutionType = TestExecutionType.MOBILE_NATIVE,
                 appPath = appPath,
                 testProjectPath = testsProjectPath,
                 testSpecPath = testSpecFilePath
@@ -226,6 +233,7 @@ class DeviceFarmTractorGradlePluginTest {
         project.pluginManager.apply("io.github.ricardorlg.DeviceFarmTractorGradlePlugin")
         val pluginTask = project.tasks.getByName("runAwsTests") as DeviceFarmTractorGradleTask
         pluginTask.projectName = projectName
+        pluginTask.testExecutionType = TestExecutionType.MOBILE_NATIVE
         pluginTask.appPath = appPath
         pluginTask.testsProjectPath = testsProjectPath
         pluginTask.testSpecFilePath = testSpecFilePath
@@ -240,30 +248,32 @@ class DeviceFarmTractorGradlePluginTest {
         coEvery { runner.getDeviceResultsTable(any()) } returns ""
         coEvery {
             runner.runTests(
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any()
+                projectName = any(),
+                devicePoolName = any(),
+                appPath = any(),
+                testExecutionType = any(),
+                testProjectPath = any(),
+                testSpecPath = any(),
+                captureVideo = any(),
+                runName = any(),
+                testReportsBaseDirectory = any(),
+                downloadReports = any(),
+                cleanStateAfterRun = any(),
+                meteredTests = any(),
+                disablePerformanceMonitoring = any()
             )
         } returns result
         mockkObject(DeviceFarmTractorFactory, KotlinLogging)
         every { KotlinLogging.logger(any<String>()) } returns mockLogger
         coEvery {
             DeviceFarmTractorFactory.createRunner(
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any()
+                deviceFarmClientBuilder = any(),
+                logger = any(),
+                accessKeyId = any(),
+                secretAccessKey = any(),
+                sessionToken = any(),
+                region = any(),
+                profileName = any()
             )
         } returns runner.right()
 
@@ -276,7 +286,8 @@ class DeviceFarmTractorGradlePluginTest {
         coVerify {
             runner.runTests(
                 projectName = projectName,
-                "",
+                devicePoolName = "",
+                testExecutionType = TestExecutionType.MOBILE_NATIVE,
                 appPath = appPath,
                 testProjectPath = testsProjectPath,
                 testSpecPath = testSpecFilePath
@@ -296,6 +307,7 @@ class DeviceFarmTractorGradlePluginTest {
         project.pluginManager.apply("io.github.ricardorlg.DeviceFarmTractorGradlePlugin")
         val pluginTask = project.tasks.getByName("runAwsTests") as DeviceFarmTractorGradleTask
         pluginTask.projectName = projectName
+        pluginTask.testExecutionType = TestExecutionType.MOBILE_NATIVE
         pluginTask.appPath = appPath
         pluginTask.testsProjectPath = testsProjectPath
         pluginTask.testSpecFilePath = testSpecFilePath
@@ -309,30 +321,32 @@ class DeviceFarmTractorGradlePluginTest {
         coEvery { runner.getDeviceResultsTable(any()) } returns ""
         coEvery {
             runner.runTests(
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any()
+                projectName = any(),
+                devicePoolName = any(),
+                appPath = any(),
+                testExecutionType = any(),
+                testProjectPath = any(),
+                testSpecPath = any(),
+                captureVideo = any(),
+                runName = any(),
+                testReportsBaseDirectory = any(),
+                downloadReports = any(),
+                cleanStateAfterRun = any(),
+                meteredTests = any(),
+                disablePerformanceMonitoring = any()
             )
         } returns result
         mockkObject(DeviceFarmTractorFactory, KotlinLogging)
         every { KotlinLogging.logger(any<String>()) } returns mockLogger
         coEvery {
             DeviceFarmTractorFactory.createRunner(
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any()
+                deviceFarmClientBuilder = any(),
+                logger = any(),
+                accessKeyId = any(),
+                secretAccessKey = any(),
+                sessionToken = any(),
+                region = any(),
+                profileName = any()
             )
         } returns runner.right()
 
@@ -343,7 +357,8 @@ class DeviceFarmTractorGradlePluginTest {
         coVerify {
             runner.runTests(
                 projectName = projectName,
-                "",
+                devicePoolName = "",
+                testExecutionType = TestExecutionType.MOBILE_NATIVE,
                 appPath = appPath,
                 testProjectPath = testsProjectPath,
                 testSpecPath = testSpecFilePath
@@ -377,12 +392,13 @@ class DeviceFarmTractorGradlePluginTest {
         mockkObject(DeviceFarmTractorFactory)
         coEvery {
             DeviceFarmTractorFactory.createRunner(
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any()
+                deviceFarmClientBuilder = any(),
+                logger = any(),
+                accessKeyId = any(),
+                secretAccessKey = any(),
+                sessionToken = any(),
+                region = any(),
+                profileName = any()
             )
         } returns expectedException.left()
 
@@ -416,12 +432,13 @@ class DeviceFarmTractorGradlePluginTest {
         every { KotlinLogging.logger(any<String>()) } returns mockLogger
         coEvery {
             DeviceFarmTractorFactory.createRunner(
-                any(),
-                any(),
-                any(),
-                any(),
-                any(),
-                any()
+                deviceFarmClientBuilder = any(),
+                logger = any(),
+                accessKeyId = any(),
+                secretAccessKey = any(),
+                sessionToken = any(),
+                region = any(),
+                profileName = any()
             )
         } returns thrownException.left()
 

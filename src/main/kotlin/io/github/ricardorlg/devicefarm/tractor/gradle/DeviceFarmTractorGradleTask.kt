@@ -4,6 +4,7 @@ import arrow.core.Either
 import io.github.ricardorlg.devicefarm.tractor.controller.services.implementations.DefaultDeviceFarmTractorLogger
 import io.github.ricardorlg.devicefarm.tractor.factory.DeviceFarmTractorFactory
 import io.github.ricardorlg.devicefarm.tractor.model.DeviceFarmTractorError
+import io.github.ricardorlg.devicefarm.tractor.model.TestExecutionType
 import kotlinx.coroutines.runBlocking
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -43,8 +44,13 @@ abstract class DeviceFarmTractorGradleTask : DefaultTask() {
     var devicePool: String = ""
 
     @get:Input
+    @set:Option(option = "aws.test.type",
+        description = "test execution type, valid values are MOBILE_WEB or MOBILE_NATIVE")
+    abstract var testExecutionType: TestExecutionType
+
+    @get:Input
     @set:Option(option = "aws.app.path", description = "app path to upload to device farm")
-    abstract var appPath: String
+    var appPath: String = ""
 
     @get:Input
     @set:Option(option = "aws.tests.path", description = "test project zip path to upload to device farm")
@@ -141,6 +147,7 @@ With love from ricardorlg
                             .runTests(
                                 projectName = projectName,
                                 devicePoolName = devicePool,
+                                testExecutionType = testExecutionType,
                                 appPath = appPath,
                                 testProjectPath = testsProjectPath,
                                 testSpecPath = testSpecFilePath,
